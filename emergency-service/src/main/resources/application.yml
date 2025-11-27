@@ -1,0 +1,12 @@
+server:
+  port: 8084   # port HTTP (utile pour actuator, healthcheck, etc.)
+
+spring:
+  application:
+    name: emergency-service
+
+grpc:
+  server:
+    port: 9090
+    enable-reflection: true
+    address: 0.0.0.0

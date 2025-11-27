@@ -1,0 +1,36 @@
+# ============ ÉTAPE 1 : Build avec Maven ============
+FROM maven:3.9.10-eclipse-temurin-21 AS builder
+
+# Copie du code source
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+
+# Build du JAR (skip tests pour aller plus vite en dev, retire --skipTests en prod si tu veux les exécuter)
+RUN mvn -B -DskipTests clean package
+
+# ============ ÉTAPE 2 : Image finale légère ============
+FROM eclipse-temurin:21-jre-alpine
+
+# Création d'un utilisateur non-root (sécurité)
+RUN addgroup -g 1001 -S -S appgroup && \
+    adduser -u 1001 -S appuser -G appgroup
+
+WORKDIR /app
+
+# Copie du JAR depuis l'étape de build
+COPY --from=builder /app/target/mobility-service-*.jar app.jar
+
+# Propriétaire non-root
+RUN chown appuser:appgroup app.jar
+USER appuser
+
+# Port exposé (celui de ton application.yml)
+EXPOSE 8081
+
+# Healthcheck intégré (actuator est déjà dans les dépendances)
+HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:8081/actuator/health || exit 1
+
+# Lancement
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]

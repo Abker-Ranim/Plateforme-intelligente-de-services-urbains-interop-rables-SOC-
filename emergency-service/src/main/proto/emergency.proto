@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.smartcity.emergency";
+option java_outer_classname = "EmergencyProto";
+
+service EmergencyService {
+  rpc SendAlert (AlertRequest) returns (AlertResponse);
+  rpc GetActiveAlerts (Empty) returns (ActiveAlertsResponse);
+}
+
+message AlertRequest {
+  string zone = 1;
+  string type = 2;
+  string description = 3;
+}
+
+message AlertResponse {
+  string id = 1;
+  string status = 2;
+  string message = 3;
+}
+
+message Empty {}
+
+message ActiveAlertsResponse {
+  repeated Alert alerts = 1;
+}
+
+message Alert {
+  string id = 1;
+  string zone = 2;
+  string type = 3;
+  string timestamp = 4;
+}

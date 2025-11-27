@@ -1,0 +1,9 @@
+version: '3.9'
+
+services:
+  airquality-soap:
+    build: .
+    container_name: airquality-soap
+    ports:
+      - "8082:8082"
+    restart: unless-stopped

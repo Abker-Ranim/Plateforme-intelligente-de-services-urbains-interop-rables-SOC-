@@ -1,0 +1,15 @@
+type Query {
+    weather(zone: String!): Weather
+    allWeather: [Weather!]!
+}
+
+type Weather {
+    id: ID!
+    zone: String!
+    temperature: Int!
+    condition: String!
+    humidity: Int!
+    windSpeed: Int!
+    rainProbability: Float!
+    forecastHour: String!
+}

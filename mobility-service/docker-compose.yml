@@ -1,0 +1,24 @@
+version: '3.9'
+
+services:
+  mobility-service:
+    build: .
+    container_name: mobility-service
+    ports:
+      - "8081:8081"
+      - "8092:8092"   # pour accéder à la console H2 en dev
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SERVER_PORT=8081
+      # Optionnel : désactiver la console H2 en prod
+      - SPRING_H2_CONSOLE_ENABLED=true
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+networks:
+  default:
+    name: smartcity-network

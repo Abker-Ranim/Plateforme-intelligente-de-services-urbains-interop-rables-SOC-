@@ -1,0 +1,10 @@
+version: '3.9'
+
+services:
+  emergency-service:
+    build: .
+    container_name: emergency-grpc
+    ports:
+      - "8084:8084"   # HTTP (actuator)
+      - "9090:9090"   # gRPC
+    restart: unless-stopped

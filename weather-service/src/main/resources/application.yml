@@ -1,0 +1,11 @@
+# weather-service/src/main/resources/application.yml
+server:
+  port: 8083
+
+spring:
+  application:
+    name: weather-service
+  graphql:
+    graphiql:
+      enabled: true
+      path: /graphiql

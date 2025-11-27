@@ -1,0 +1,16 @@
+version: '3.9'
+
+services:
+  weather-service:
+    build: .
+    container_name: weather-service
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--spider", "http://localhost:8083/actuator/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped

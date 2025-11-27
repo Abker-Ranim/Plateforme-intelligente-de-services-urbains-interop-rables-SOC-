@@ -1,0 +1,54 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: smartcity-gateway
+
+  cloud:
+    gateway:
+      routes:
+        # 1. Mobilité REST – Bus
+        - id: mobility
+          uri: http://mobility-rest:8081          # ← NOM DU CONTENEUR, PAS localhost !
+          predicates:
+            - Path=/api/bus/**
+          filters:
+            - RewritePath=/api/bus/(?<remaining>.*), /api/${remaining}
+
+        # 2. Météo GraphQL
+        - id: weather
+          uri: http://weather-graphql:8083        # ← NOM DU CONTENEUR
+          predicates:
+            - Path=/api/weather/**
+          filters:
+            - StripPrefix=2
+
+        # 3. Qualité de l’air SOAP
+        - id: airquality
+          uri: http://airquality-soap:8082        # ← NOM DU CONTENEUR
+          predicates:
+            - Path=/airquality/**
+          filters:
+            - RewritePath=/airquality/(?<segment>.*), /${segment}
+
+        # 4. Emergency gRPC (bonus)
+        - id: emergency
+          uri: http://emergency-grpc:9090
+          predicates:
+            - Path=/api/emergency/**
+          filters:
+            - StripPrefix=2
+
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origins: "*"
+            allowed-methods: "*"
+            allowed-headers: "*"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway,routes
