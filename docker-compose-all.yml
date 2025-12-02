@@ -1,0 +1,53 @@
+version: '3.9'
+
+services:
+  gateway:
+    build: ./smartcity-gateway
+    container_name: smartcity-gateway
+    ports:
+      - "8088:8088"
+    depends_on:
+      - mobility-service
+      - weather-service
+      - airquality-soap
+      - emergency-service
+    networks:
+      - smartcity-net
+
+  mobility-service:
+    build: ./mobility-service
+    container_name: mobility-rest
+    ports:
+      - "8081:8081"
+    networks:
+      - smartcity-net
+
+  weather-service:
+    build: ./weather-service
+    container_name: weather-graphql
+    ports:
+      - "8083:8083"
+    networks:
+      - smartcity-net
+
+  airquality-soap:
+    build: ./airquality-soap-jaxws
+    container_name: airquality-soap
+    ports:
+      - "8082:8082"
+    networks:
+      - smartcity-net
+
+  emergency-service:
+    build: ./emergency-service
+    container_name: emergency-grpc
+    ports:
+      - "8084:8084"
+      - "9090:9090"
+    networks:
+      - smartcity-net
+
+networks:
+  smartcity-net:
+    name: smartcity-net
+    driver: bridge
